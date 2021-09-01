@@ -1,5 +1,8 @@
+import { useMemo } from 'react'
+import { atom, useRecoilCallback } from 'recoil'
+import { uid } from 'uid'
+
 import { TodoItem } from '../types/todoList'
-import { atom } from 'recoil'
 
 const TodoListState = atom<TodoItem[]>({
     key: 'TodoList',
@@ -21,5 +24,20 @@ const TodoListState = atom<TodoItem[]>({
         },
     ],
 })
+
+export const useTodoList = () => {
+    const addItem = useRecoilCallback(({ set }) => (label: string) => {
+        set(TodoListState, (todoList) => [
+            ...todoList,
+            {
+                id: uid(),
+                label,
+                completed: false,
+            },
+        ])
+    })
+
+    return useMemo(() => ({ addItem }), [addItem])
+}
 
 export default TodoListState
