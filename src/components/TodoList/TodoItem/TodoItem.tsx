@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
 import classNames from 'classnames'
 
-import TodoItemState from '../../../atoms/todoItem'
+import TodoItemState, { useTodoItem } from '../../../atoms/todoItem'
 
 type TodoItemProps = {
     id: string
@@ -10,6 +10,14 @@ type TodoItemProps = {
 
 const TodoItem = ({ id }: TodoItemProps) => {
     const todoItem = useRecoilValue(TodoItemState(id))
+    const { updateItem, removeItem } = useTodoItem(id)
+
+    const changeCompleteStatus = useCallback(
+        ({ currentTarget }) => {
+            updateItem({ completed: currentTarget.checked })
+        },
+        [updateItem],
+    )
 
     if (!todoItem) {
         return null
@@ -26,9 +34,10 @@ const TodoItem = ({ id }: TodoItemProps) => {
                     className="toggle"
                     type="checkbox"
                     checked={todoItem.completed}
+                    onChange={changeCompleteStatus}
                 />
                 <label>{todoItem.label}</label>
-                <button className="destroy"></button>
+                <button className="destroy" onClick={removeItem} />
             </div>
             <input className="edit" value="Create a TodoMVC template" />
         </li>

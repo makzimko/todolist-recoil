@@ -37,7 +37,16 @@ export const useTodoList = () => {
         ])
     })
 
-    return useMemo(() => ({ addItem }), [addItem])
+    const clearCompleted = useRecoilCallback(({ set }) => () => {
+        set(TodoListState, (todoList) =>
+            todoList.filter(({ completed }) => !completed),
+        )
+    })
+
+    return useMemo(
+        () => ({ addItem, clearCompleted }),
+        [addItem, clearCompleted],
+    )
 }
 
 export default TodoListState
